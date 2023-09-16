@@ -1,0 +1,45 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: rgb-display-off
+spec:
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+          - name: rgb-display-on          
+            command: [ 'python']
+            args: [ "/command.py", "active", "--boolean", "false" ]
+            image: ghcr.io/mmaschenk/docker-rgb:1.1
+            envFrom:
+            - secretRef:
+                name: passwords
+            - configMapRef:
+                name: rgb-environment
+  schedule: 0 22 * * *
+  successfulJobsHistoryLimit: 3
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: rgb-display-on
+spec:
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+          - name: rgb-display-on          
+            command: [ 'python']
+            args: [ "/command.py", "active", "--boolean", "true" ]
+            image: ghcr.io/mmaschenk/docker-rgb:1.1
+            envFrom:
+            - secretRef:
+                name: passwords
+            - configMapRef:
+                name: rgb-environment
+  schedule: 30 8 * * *
+  successfulJobsHistoryLimit: 3
