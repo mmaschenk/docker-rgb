@@ -19,7 +19,7 @@ globalstate = {}
 
 def str2bool(v):
     if isinstance(v, bool):
-       return v
+        return v
     if v.lower() in ('yes', 'true', 't', 'y', '1'):
         return True
     elif v.lower() in ('no', 'false', 'f', 'n', '0'):
@@ -47,9 +47,11 @@ def send(command, value,
     message = { 'type': command, 'value': value }
 
     print("Sending: [{0}]".format(json.dumps(message)))
-    channel.basic_publish(exchange='', routing_key=mqrabbit_destination, 
+    print(f"Sending {json.dumps(message)} to exchange [{mqrabbit_exchange}]")
+    channel.basic_publish(exchange=mqrabbit_exchange, routing_key='*', 
                             body=json.dumps(message))
-            
+
+    channel.close()            
 
         #time.sleep(30)
 
